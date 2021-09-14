@@ -3,7 +3,6 @@
 }
 .content-wrapper{
     height: calc(100vh - 64px);
-    background-color: red;
     padding: 1px;
     display: flex;
 }
