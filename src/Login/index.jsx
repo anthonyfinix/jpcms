@@ -24,7 +24,7 @@ const Login = () => {
             <Paper>
                 <Box display="flex" flexDirection="column" padding={10}>
                     <TextField label="username" value={username} variant="outlined" onChange={(e) => setUsername(e.target.value)} />
-                    <TextField label="password" value={password} variant="outlined" onChange={(e) => setPassword(e.target.value)} />
+                    <TextField type="password" label="password" value={password} variant="outlined" onChange={(e) => setPassword(e.target.value)} />
                     <Button onClick={login} >Login</Button>
                 </Box>
 
