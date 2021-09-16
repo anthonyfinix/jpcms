@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-    baseURL: "https://jpcms.herokuapp.com/"
+    baseURL: process.env.REACT_API_URL || "https://localhost:3001"
 })
 
 http.interceptors.request.use(request => {
