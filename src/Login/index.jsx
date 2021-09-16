@@ -11,6 +11,7 @@ const Login = () => {
     const { user, setUser } = React.useContext(UserContext);
     const login = () => {
         http.post('/user/login', { username, password }).then(response => {
+            console.log(response)
             if (!response.data.error) {
                 setUser(response.data.user)
             }
