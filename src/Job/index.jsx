@@ -22,6 +22,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import { Menu, MenuItem } from '@material-ui/core'
+import moment from 'moment';
 const Job = () => {
     const [isUpdate, setIsUpdate] = React.useState(false)
     const [open, setOpen] = React.useState(false)
@@ -62,7 +63,6 @@ const Job = () => {
     }
     const updateJob = async (updatedJob) => {
         let response = await http.put('/service', { ...updatedJob })
-        console.log(response)
         if (!response.error) {
             handleNewJobDialogClose();
             let response = await http.get('/service');
@@ -91,8 +91,8 @@ const Job = () => {
                 model: job.model,
                 issue: job.issues,
                 brand: job.brand,
-                receivedDate: job.receivedDate,
-                returnedDate: job.returnedDate,
+                receivedDate: moment(job.receivedDate).format("Do MMM YY"),
+                returnedDate: moment(job.returnedDate).format("Do MMM YY"),
                 detailedDescription: job.detailedDescription,
                 amount: job.amount
             }
