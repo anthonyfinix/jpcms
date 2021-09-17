@@ -23,16 +23,20 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import { Menu, MenuItem } from '@material-ui/core'
 import moment from 'moment';
+import SingleJobDialog from './SingleJobDialog';
 const Job = () => {
     const [isUpdate, setIsUpdate] = React.useState(false)
-    const [open, setOpen] = React.useState(false)
+    const [newDialogIsOpen, setNewDialogBoxIsOpen] = React.useState(false)
+    const [singleDialogIsOpen, setSingleDialogBoxIsOpen] = React.useState(false)
     const [services, setServices] = React.useState([]);
     const handleNewJobDialogClose = () => {
-        setOpen(false);
-        if(isUpdate) setIsUpdate(false)
+        setNewDialogBoxIsOpen(false);
+        if (isUpdate) setIsUpdate(false)
     };
-    const handleNewJobDialogOpen = () => setOpen(true);
-    const selectedRowRef = React.useRef(null);
+    const handleNewJobDialogOpen = () => setNewDialogBoxIsOpen(true);
+    const handleSingleJobDialogOpen = () => setSingleDialogBoxIsOpen(true);
+    const handleSingleJobDialogClose = () => { setSingleDialogBoxIsOpen(false); currentSelectedJobDetailsRef.current = null; }
+    const currentSelectedJobDetailsRef = React.useRef(null);
     const [currentSelectedRowRef, setCurrentSelectedRowRef] = React.useState(null)
     const tableIcons = {
         Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -68,7 +72,7 @@ const Job = () => {
             handleNewJobDialogClose();
             let response = await http.get('/service');
             setServices(response.data.result);
-            selectedRowRef.current = null;
+            currentSelectedJobDetailsRef.current = null;
         }
         setIsUpdate(false)
         return response;
@@ -102,13 +106,17 @@ const Job = () => {
         // console.log(rows)
         return rows;
     }
+    const handleView = () => {
+        handleSingleJobDialogOpen();
+        setCurrentSelectedRowRef(null);
+    }
     const handleEdit = () => {
         setCurrentSelectedRowRef(null);
         handleNewJobDialogOpen()
         setIsUpdate(true)
     }
     const handleDelete = async () => {
-        await http.delete(`/service/${selectedRowRef.current._id}`);
+        await http.delete(`/service/${currentSelectedJobDetailsRef.current._id}`);
         let response = await http.get('/service')
         setServices(response.data.result)
         setCurrentSelectedRowRef(null)
@@ -135,19 +143,24 @@ const Job = () => {
                         onClick: (event, rowData) => {
                             setCurrentSelectedRowRef(event.target)
                             http.get(`/service/${rowData.id}`).then(response => {
-                                selectedRowRef.current = response.data.result;
+                                currentSelectedJobDetailsRef.current = response.data.result;
                             })
                         }
                     }
                 ]}
             />
             <NewJobDialogBox
-                open={open}
+                open={newDialogIsOpen}
                 handleClose={handleNewJobDialogClose}
                 createJob={createJob}
                 updateJob={updateJob}
-                selected={selectedRowRef.current}
+                selected={currentSelectedJobDetailsRef.current}
                 isUpdate={isUpdate}
+            />
+            <SingleJobDialog
+                open={singleDialogIsOpen}
+                handleClose={handleSingleJobDialogClose}
+                job={currentSelectedJobDetailsRef.current}
             />
             <Menu
                 id="simple-menu"
@@ -156,6 +169,7 @@ const Job = () => {
                 open={Boolean(currentSelectedRowRef)}
                 onClose={() => setCurrentSelectedRowRef(null)}
             >
+                <MenuItem onClick={handleView}>View</MenuItem>
                 <MenuItem onClick={handleDelete}>Delete</MenuItem>
                 <MenuItem onClick={handleEdit}>Update</MenuItem>
             </Menu>
