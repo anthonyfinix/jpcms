@@ -60,6 +60,7 @@ const Job = () => {
             let response = await http.get('/service');
             setServices(response.data.result);
         }
+        return response;
     }
     const updateJob = async (updatedJob) => {
         let response = await http.put('/service', { ...updatedJob })
@@ -70,6 +71,7 @@ const Job = () => {
             selectedRowRef.current = null;
         }
         setIsUpdate(false)
+        return response;
     }
     const columns = [
         { field: 'customerName', title: "Customer Name", },

@@ -13,19 +13,34 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
     const [receivedDate, setReceivedDate] = React.useState(`${moment().format("YYYY")}-${moment().format("MM")}-${moment().format("DD")}`);
     const [returnedDate, setReturnedDate] = React.useState(`${moment().format("YYYY")}-${moment().format("MM")}-${moment().format("DD")}`);
     const [detailedDescription, setDetailedDescription] = React.useState('');
-    const handleReceivedDateChange = (e) => {
-        console.log('LOCAL', e.target.value)
-        setReceivedDate(e.target.value)
-    };
+    const handleReceivedDateChange = (e) => setReceivedDate(e.target.value);
     const handleReturnedDateChange = (e) => setReturnedDate(e.target.value);
-    const handleStatusChange = (e) => setStatus(e.target.value === "resolved" ? true : false)
+    const handleStatusChange = (e) => setStatus(e.target.value === "resolved" ? true : false);
+    const resetInputs = ()=>{
+        setCustomerName("")
+        setSerialNumber("")
+        setModel("")
+        setIssues("")
+        setBrand("")
+        setStatus("")
+        setAmount("")
+        setReceivedDate(`${moment().format("YYYY")}-${moment().format("MM")}-${moment().format("DD")}`)
+        setReturnedDate(`${moment().format("YYYY")}-${moment().format("MM")}-${moment().format("DD")}`)
+        setDetailedDescription("")
+    }
     const handleSubmit = () => {
-        let job = { customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription }
-        createJob(job);
+        if (isUpdate) {
+            handleJobUpdate().then(()=>resetInputs())
+        } else {
+            handleJobCreate().then(()=>resetInputs())
+        }
     }
-    const handleUpdate = () => {
-        updateJob({ id: selected._id, customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription })
+    const handleDialogClose = ()=>{
+        resetInputs();
+        handleClose();
     }
+    const handleJobCreate = () => createJob({ customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription })
+    const handleJobUpdate = () => updateJob({ id: selected._id, customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription })
     useEffect(() => {
         if (isUpdate && selected) {
             setCustomerName(selected.customerName);
@@ -41,7 +56,7 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
         }
     }, [isUpdate])
     return (
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open} onClose={ handleDialogClose}>
             <div className="add-new-service-wrapper">
                 <TextField size="small" value={customerName} onChange={e => setCustomerName(e.target.value)} label="Customer Name" variant="outlined" />
                 <TextField size="small" value={serialNumber} onChange={e => setSerialNumber(e.target.value)} label="Serial Number" variant="outlined" type="number" />
@@ -77,7 +92,7 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
                     onChange={handleReturnedDateChange}
                 />
                 <TextField value={detailedDescription} onChange={e => setDetailedDescription(e.target.value)} size="small" label="Detailed Description" multiline variant="outlined" />
-                {isUpdate ? <Button onClick={handleUpdate}>Update</Button> : <Button onClick={handleSubmit}>Add New Job</Button>}
+                {isUpdate ? <Button onClick={handleSubmit}>Update</Button> : <Button onClick={handleSubmit}>Add New Job</Button>}
             </div>
         </Dialog>
     )
