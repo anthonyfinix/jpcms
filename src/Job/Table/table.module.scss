@@ -1,0 +1,19 @@
+.wrapper{
+    height: calc(100% - 50px);
+    overflow-y: scroll;
+    min-width: 100%;
+}
+.cell {
+  padding: 10px !important;
+  font-size: 12px !important;
+}
+.th {
+  font-weight: bolder !important;
+}
+.td {
+  font-size: 12px !important;
+}
+.opt_cell{
+text-align: right !important; 
+
+}

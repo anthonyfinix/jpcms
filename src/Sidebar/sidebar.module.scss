@@ -1,0 +1,13 @@
+.wrapper{
+    min-width: 150px;
+    background-color: rgb(243, 243, 243);
+    box-shadow: inset 0px 0px 10px -3px rgba(0, 0, 0, 0.426);
+    transition: margin .1s ease-in-out;
+    
+}
+.hidden{
+    margin-left: -150px;
+}
+.show{
+    margin-left: 0px;
+}

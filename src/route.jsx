@@ -5,7 +5,6 @@ import Login from "./Login";
 const MainRouter = () => {
     return (
         <Switch>
-            {console.log(process.env)}
             <Route exact path="/login" component={Login} />
             <Route exact path="/" component={App} />
         </Switch>

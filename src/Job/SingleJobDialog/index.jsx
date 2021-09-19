@@ -1,6 +1,7 @@
 import React from "react";
 import moment from "moment";
-import { Dialog,Box } from "@material-ui/core";
+import Dialog from '@mui/material/Dialog';
+import Box from '@mui/material/Box';
 const SingleJobDialog = ({ open, handleClose, job, ...props }) => {
     const handleDialogClose = () => {
         handleClose()

@@ -1,11 +1,15 @@
 import React from 'react';
-import { Button,Box } from '@material-ui/core';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
 import classes from './header.module.css';
-const JobHeader = ({addNew}) => {
+const JobHeader = ({ addNew }) => {
     return (
         <Box display="flex" className={classes.wrapper} justifyContent="space-between" alignItems="center">
-            <h1>Jobs</h1>
-            <Button onClick={addNew} variant="contained">Add New</Button>
+            <h3>Jobs</h3>
+            <IconButton onClick={addNew} color="primary" aria-label="upload picture" component="span">
+                <AddIcon />
+            </IconButton>
         </Box>
     )
 }

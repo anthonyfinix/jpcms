@@ -1,5 +1,11 @@
-import { Dialog, TextField, FormControl, InputLabel, Select, MenuItem, Button } from "@material-ui/core";
-import React, { useEffect } from 'react';
+import React from 'react';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import moment from "moment";
 
 const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, isUpdate }) => {
@@ -41,7 +47,7 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
     }
     const handleJobCreate = () => createJob({ customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription })
     const handleJobUpdate = () => updateJob({ id: selected._id, customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription })
-    useEffect(() => {
+    React.useEffect(() => {
         if (isUpdate && selected) {
             setCustomerName(selected.customerName);
             setSerialNumber(selected.serialNumber);

@@ -1,29 +1,9 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 import http from '../util/axios';
 import NewJobDialogBox from '../Job/NewJobDialogBox';
-import { DataGrid } from '@mui/x-data-grid';
 import JobHeader from './Header';
-import classes from './job.module.css'
-import MaterialTable from 'material-table';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import AddBox from '@material-ui/icons/AddBox';
-import ArrowDownward from '@material-ui/icons/ArrowDownward';
-import Check from '@material-ui/icons/Check';
-import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import ChevronRight from '@material-ui/icons/ChevronRight';
-import Clear from '@material-ui/icons/Clear';
-import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import Edit from '@material-ui/icons/Edit';
-import FilterList from '@material-ui/icons/FilterList';
-import FirstPage from '@material-ui/icons/FirstPage';
-import LastPage from '@material-ui/icons/LastPage';
-import Remove from '@material-ui/icons/Remove';
-import SaveAlt from '@material-ui/icons/SaveAlt';
-import Search from '@material-ui/icons/Search';
-import ViewColumn from '@material-ui/icons/ViewColumn';
-import { Menu, MenuItem } from '@material-ui/core'
-import moment from 'moment';
 import SingleJobDialog from './SingleJobDialog';
+import JobTable from './Table';
 const Job = () => {
     const [isUpdate, setIsUpdate] = React.useState(false)
     const [newDialogIsOpen, setNewDialogBoxIsOpen] = React.useState(false)
@@ -35,28 +15,8 @@ const Job = () => {
     };
     const handleNewJobDialogOpen = () => setNewDialogBoxIsOpen(true);
     const handleSingleJobDialogOpen = () => setSingleDialogBoxIsOpen(true);
-    const handleSingleJobDialogClose = () => { setSingleDialogBoxIsOpen(false); currentSelectedJobDetailsRef.current = null; }
-    const currentSelectedJobDetailsRef = React.useRef(null);
-    const [currentSelectedRowRef, setCurrentSelectedRowRef] = React.useState(null)
-    const tableIcons = {
-        Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-        Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-        Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-        Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
-        DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-        Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-        Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
-        Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
-        FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-        LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-        NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-        PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
-        ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-        Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
-        SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
-        ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
-        ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
-    };
+    const handleSingleJobDialogClose = () => { setSingleDialogBoxIsOpen(false); currentSelectedJobDetails.current = null; }
+    const currentSelectedJobDetails = React.useRef(null);
     const createJob = async (newJob) => {
         let response = await http.post('/service', { ...newJob })
         if (!response.error) {
@@ -72,54 +32,25 @@ const Job = () => {
             handleNewJobDialogClose();
             let response = await http.get('/service');
             setServices(response.data.result);
-            currentSelectedJobDetailsRef.current = null;
+            currentSelectedJobDetails.current = null;
         }
         setIsUpdate(false)
         return response;
     }
-    const columns = [
-        { field: 'customerName', title: "Customer Name", },
-        { field: "serialNumber", title: "Sr.No", },
-        { field: "model", title: "Model", },
-        // { field: "issue", title: "Issue", },
-        // { field: "brand", title: "Brand", width: 120,},
-        { field: "receivedDate", title: "Rec Date", },
-        { field: "returnedDate", title: "Ret Date", },
-        // { field: "detailedDescription", title: "Description", },
-        { field: "amount", title: "Amount" },
-    ]
-    const filterColumns = (jobs) => {
-        let rows = jobs.map(job => {
-            return {
-                id: job._id,
-                serialNumber: job.serialNumber,
-                customerName: job.customerName,
-                model: job.model,
-                issue: job.issues,
-                brand: job.brand,
-                receivedDate: moment(job.receivedDate).format("Do MMM YY"),
-                returnedDate: moment(job.returnedDate).format("Do MMM YY"),
-                detailedDescription: job.detailedDescription,
-                amount: job.amount
-            }
-        })
-        // console.log(rows)
-        return rows;
+    const deleteJob = async () => {
+        await http.delete(`/service/${currentSelectedJobDetails.current._id}`);
+        let response = await http.get('/service')
+        setServices(response.data.result)
     }
-    const handleView = () => {
+    const handleViewJob = () => {
         handleSingleJobDialogOpen();
-        setCurrentSelectedRowRef(null);
     }
-    const handleEdit = () => {
-        setCurrentSelectedRowRef(null);
+    const handleUpdateJob = () => {
         handleNewJobDialogOpen()
         setIsUpdate(true)
     }
-    const handleDelete = async () => {
-        await http.delete(`/service/${currentSelectedJobDetailsRef.current._id}`);
-        let response = await http.get('/service')
-        setServices(response.data.result)
-        setCurrentSelectedRowRef(null)
+    const handleDeleteJob = ()=>{
+        deleteJob();
     }
     React.useEffect(() => {
         http.get('/service').then(response => {
@@ -128,52 +59,29 @@ const Job = () => {
     }, [])
 
     return (
-        <div className={classes.content}>
+        <>
             <JobHeader addNew={handleNewJobDialogOpen} />
-            <MaterialTable
-                options={{ search: false, showTitle: false, toolbar: false }}
-                icons={tableIcons}
-                className={classes.wrapper}
-                columns={columns}
-                data={filterColumns(services)}
-                actions={[
-                    {
-                        icon: () => <MoreVertIcon />,
-                        tooltip: 'Save User',
-                        onClick: (event, rowData) => {
-                            setCurrentSelectedRowRef(event.target)
-                            http.get(`/service/${rowData.id}`).then(response => {
-                                currentSelectedJobDetailsRef.current = response.data.result;
-                            })
-                        }
-                    }
-                ]}
+            <JobTable
+                jobs={services}
+                selected={currentSelectedJobDetails}
+                handleViewJob={handleViewJob}
+                handleUpdate={handleUpdateJob}
+                handleDelete={handleDeleteJob}
             />
             <NewJobDialogBox
                 open={newDialogIsOpen}
                 handleClose={handleNewJobDialogClose}
                 createJob={createJob}
                 updateJob={updateJob}
-                selected={currentSelectedJobDetailsRef.current}
+                selected={currentSelectedJobDetails.current}
                 isUpdate={isUpdate}
             />
             <SingleJobDialog
                 open={singleDialogIsOpen}
                 handleClose={handleSingleJobDialogClose}
-                job={currentSelectedJobDetailsRef.current}
+                job={currentSelectedJobDetails.current}
             />
-            <Menu
-                id="simple-menu"
-                anchorEl={currentSelectedRowRef}
-                keepMounted
-                open={Boolean(currentSelectedRowRef)}
-                onClose={() => setCurrentSelectedRowRef(null)}
-            >
-                <MenuItem onClick={handleView}>View</MenuItem>
-                <MenuItem onClick={handleDelete}>Delete</MenuItem>
-                <MenuItem onClick={handleEdit}>Update</MenuItem>
-            </Menu>
-        </div>
+        </>
     )
 }
 export default Job;
