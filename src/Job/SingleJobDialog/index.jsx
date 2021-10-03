@@ -1,6 +1,7 @@
 import React from "react";
 import moment from "moment";
 import Dialog from '@mui/material/Dialog';
+import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 const SingleJobDialog = ({ open, handleClose, job, ...props }) => {
     const handleDialogClose = () => {
@@ -8,31 +9,31 @@ const SingleJobDialog = ({ open, handleClose, job, ...props }) => {
     }
     if (!job) return null
     return (
-        <Dialog open={open} onClose={handleDialogClose}>
+        <Dialog open={open} fullWidth={true} onClose={handleDialogClose}>
             <Box padding="30px">
                 <div>
-                    <p>Customer name</p>
-                    <p style={{ fontWeight: 500 }}>{job.customerName}</p>
+                    <Typography variant="overline" display="block" gutterBottom>Customer name</Typography>
+                    <Typography variant="h6" gutterBottom component="div">{job.customerName}</Typography>
                 </div>
                 <div>
-                    <p>Model Number</p>
-                    <p style={{ fontWeight: 500 }}>{job.model}</p>
+                    <Typography variant="overline" display="block" gutterBottom>Model Number</Typography>
+                    <Typography variant="h6" gutterBottom component="div">{job.model}</Typography>
                 </div>
                 <div>
-                    <p>Received Date</p>
-                    <p style={{ fontWeight: 500 }}>{moment(job.receivedDate).format("Do MMM YY")}</p>
+                    <Typography variant="overline" display="block" gutterBottom>Received Date</Typography>
+                    <Typography variant="h6" gutterBottom component="div">{moment(job.receivedDate).format("Do MMM YY")}</Typography>
                 </div>
                 <div>
-                    <p>Returned Date</p>
-                    <p style={{ fontWeight: 500 }}>{moment(job.returnedDate).format("Do MMM YY")}</p>
+                    <Typography variant="overline" display="block" gutterBottom>Returned Date</Typography>
+                    <Typography variant="h6" gutterBottom component="div">{moment(job.returnedDate).format("Do MMM YY")}</Typography>
                 </div>
                 <div>
-                    <p>Amount</p>
-                    <p style={{ fontWeight: 500 }}>{job.amount}</p>
+                <Typography variant="overline" display="block" gutterBottom>Amount</Typography>
+                <Typography variant="h6" gutterBottom component="div">{job.amount}</Typography>
                 </div>
                 <div>
-                    <p>Description</p>
-                    <p style={{ fontWeight: 500 }}>{job.detailedDescription}</p>
+                <Typography variant="overline" display="block" gutterBottom>Description</Typography>
+                <Typography variant="h6" gutterBottom component="div">{job.detailedDescription}</Typography>
                 </div>
             </Box>
         </Dialog>

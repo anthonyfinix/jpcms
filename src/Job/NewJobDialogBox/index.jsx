@@ -7,22 +7,58 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import moment from "moment";
+import classes from './newJobDialogBox.module.scss'
 
 const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, isUpdate }) => {
-    const [customerName, setCustomerName] = React.useState('')
-    const [serialNumber, setSerialNumber] = React.useState('')
+    // customer
+    const [customerName, setCustomerName] = React.useState('');
+    const [customerNameError, setCustomerNameError] = React.useState("")
+    const handleCustomerNameChange = (e) => {
+        let value = e.currentTarget.value;
+        (value === "") ? setCustomerNameError("Should not be empty") : setCustomerNameError("");
+        setCustomerName(value);
+    }
+    const [serialNumber, setSerialNumber] = React.useState('');
+    // model
     const [model, setModel] = React.useState('')
+    const [modelError, setModelError] = React.useState('')
+    const handleModelChange = (e) => {
+        let value = e.currentTarget.value;
+        (value === "") ? setModelError("Should not be empty") : setModelError("");
+        setModel(value);
+    }
+    // issue
     const [issues, setIssues] = React.useState('')
+    const [issueError, setIssueError] = React.useState('')
+    const handleIssueChange = (e) => {
+        let value = e.currentTarget.value;
+        (value === "") ? setIssueError("Should not be empty") : setIssueError("");
+        setIssues(value);
+    }
+    // brand
     const [brand, setBrand] = React.useState('')
+    const [brandError, setBrandError] = React.useState('')
+    const handleBrandChange = (e) => {
+        let value = e.currentTarget.value;
+        (value === "") ? setBrandError("Should not be empty") : setBrandError("");
+        setBrand(value);
+    }
     const [status, setStatus] = React.useState(false);
+    // amount
     const [amount, setAmount] = React.useState('')
+    const [amountError, setAmountError] = React.useState('')
+    const handleAmountChange = (e) => {
+        let value = e.currentTarget.value;
+        (value === "") ? setAmountError("Should not be empty") : setAmountError("");
+        setAmount(value);
+    }
     const [receivedDate, setReceivedDate] = React.useState(`${moment().format("YYYY")}-${moment().format("MM")}-${moment().format("DD")}`);
     const [returnedDate, setReturnedDate] = React.useState(`${moment().format("YYYY")}-${moment().format("MM")}-${moment().format("DD")}`);
     const [detailedDescription, setDetailedDescription] = React.useState('');
     const handleReceivedDateChange = (e) => setReceivedDate(e.target.value);
     const handleReturnedDateChange = (e) => setReturnedDate(e.target.value);
     const handleStatusChange = (e) => setStatus(e.target.value === "resolved" ? true : false);
-    const resetInputs = ()=>{
+    const resetInputs = () => {
         setCustomerName("")
         setSerialNumber("")
         setModel("")
@@ -36,17 +72,17 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
     }
     const handleSubmit = () => {
         if (isUpdate) {
-            handleJobUpdate().then(()=>resetInputs())
+            handleJobUpdate().then(() => resetInputs())
         } else {
-            handleJobCreate().then(()=>resetInputs())
+            handleJobCreate().then(() => resetInputs())
         }
     }
-    const handleDialogClose = ()=>{
+    const handleDialogClose = () => {
         resetInputs();
         handleClose();
     }
-    const handleJobCreate = () => createJob({ customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription })
-    const handleJobUpdate = () => updateJob({ id: selected._id, customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription })
+    const handleJobCreate = () => createJob({ customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription });
+    const handleJobUpdate = () => updateJob({ id: selected._id, customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription });
     React.useEffect(() => {
         if (isUpdate && selected) {
             setCustomerName(selected.customerName);
@@ -62,13 +98,21 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
         }
     }, [isUpdate])
     return (
-        <Dialog open={open} onClose={ handleDialogClose}>
+        <Dialog open={open} fullWidth={true} onClose={handleDialogClose}>
             <div className="add-new-service-wrapper">
-                <TextField size="small" value={customerName} onChange={e => setCustomerName(e.target.value)} label="Customer Name" variant="outlined" />
+                <TextField
+                    error={!!customerNameError}
+                    helperText={customerNameError}
+                    size="small"
+                    value={customerName}
+                    onChange={handleCustomerNameChange}
+                    label="Customer Name"
+                    variant="outlined"
+                />
                 <TextField size="small" value={serialNumber} onChange={e => setSerialNumber(e.target.value)} label="Serial Number" variant="outlined" type="number" />
-                <TextField size="small" value={model} onChange={e => setModel(e.target.value)} label="Model" variant="outlined" />
-                <TextField size="small" value={issues} onChange={e => setIssues(e.target.value)} label="Issues" variant="outlined" />
-                <TextField size="small" value={brand} onChange={e => setBrand(e.target.value)} label="Brand" variant="outlined" />
+                <TextField error={!!modelError} helperText={modelError} size="small" value={model} onChange={handleModelChange} label="Model" variant="outlined" />
+                <TextField error={!!issueError} helperText={issueError} size="small" value={issues} onChange={handleIssueChange} label="Issues" variant="outlined" />
+                <TextField error={!!brandError} helperText={brandError} size="small" value={brand} onChange={handleBrandChange} label="Brand" variant="outlined" />
                 <FormControl variant="outlined" size="small">
                     <InputLabel id="demo-simple-select-outlined-label">Status</InputLabel>
                     <Select value={status === true ? "resolved" : "returned"} onChange={handleStatusChange}>
@@ -76,7 +120,16 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
                         <MenuItem value="returned">Return</MenuItem>
                     </Select>
                 </FormControl>
-                <TextField size="small" value={amount} onChange={e => setAmount(e.target.value)} label="Amount" variant="outlined" />
+                <TextField
+                    error={!!amountError}
+                    helperText={amountError}
+                    type="number"
+                    size="small"
+                    value={amount}
+                    onChange={handleAmountChange}
+                    label="Amount"
+                    variant="outlined"
+                />
                 <TextField
                     id="date"
                     label="Received Date"
@@ -98,7 +151,15 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
                     onChange={handleReturnedDateChange}
                 />
                 <TextField value={detailedDescription} onChange={e => setDetailedDescription(e.target.value)} size="small" label="Detailed Description" multiline variant="outlined" />
-                {isUpdate ? <Button onClick={handleSubmit}>Update</Button> : <Button onClick={handleSubmit}>Add New Job</Button>}
+                <div className={classes.actionWrapper}>
+                    <Button onClick={handleDialogClose}> Close </Button>
+                    <Button
+                        disabled={modelError || customerNameError || issueError || amountError}
+                        variant="contained"
+                        onClick={handleSubmit}>
+                        {isUpdate ? "Update" : "Add New Job"}
+                    </Button>
+                </div>
             </div>
         </Dialog>
     )

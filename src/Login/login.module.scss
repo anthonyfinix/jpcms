@@ -1,0 +1,26 @@
+.main_wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(241, 241, 241);
+}
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+}
+.brand_wrapper{
+    display: flex;
+    align-items: center;
+}
+.brand_wrapper > *{
+    padding: 5px;
+}
+.brand_wrapper > *:nth-child(2){
+    font-weight: bolder;
+}

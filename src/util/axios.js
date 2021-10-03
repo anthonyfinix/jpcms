@@ -1,5 +1,5 @@
 import axios from "axios";
-const http = axios.create({ baseURL: process.env.REACT_APP_API_URL || "https://localhost:3001" })
+const http = axios.create({ baseURL: process.env.REACT_APP_API_URL || "http://localhost:8080" })
 
 http.interceptors.request.use(request => {
     let accessToken = localStorage.getItem("JPtechSolutionAccessToken");
