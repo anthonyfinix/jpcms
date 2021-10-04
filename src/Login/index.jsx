@@ -9,15 +9,20 @@ import { UserContext } from '../UserProvider';
 import { useHistory } from 'react-router';
 import classes from './login.module.scss';
 import logo from '../assets/vectors/logo.svg';
+import { SnackbarContext } from '../shared/SnackbarProvider';
 
 const Login = () => {
     const history = useHistory();
+    const { notify } = React.useContext(SnackbarContext);
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
     const { user, setUser } = React.useContext(UserContext);
     const login = () => {
         http.post('/user/login', { username, password })
-            .then(response => !response.data.error && setUser(response.data.user))
+            .then(response => {
+                if (response.data.error) notify(response.data.error)
+                !response.data.error && setUser(response.data.user)
+            })
     }
     React.useEffect(() => {
         if (user) history.push('/');
@@ -45,6 +50,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 <Button variant="contained" onClick={login}>Login</Button>
+                <p onClick={() => history.push('/register')}>Register?</p>
             </Paper>
         </Box>
     )

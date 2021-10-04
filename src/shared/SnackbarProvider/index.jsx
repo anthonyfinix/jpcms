@@ -1,9 +1,9 @@
 import { Snackbar } from "@material-ui/core";
 import React from "react";
 
+export const SnackbarContext = React.createContext("");
 const SnackbarProvider = (props) => {
     const [message, setMessage] = React.useState("");
-    const SnackbarContext = React.createContext("");
     const notify = (message) => {
         setMessage(message);
         setTimeout(() => setMessage(""), 7000)
