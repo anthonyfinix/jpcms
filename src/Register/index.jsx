@@ -13,13 +13,43 @@ import { SnackbarContext } from '../shared/SnackbarProvider';
 
 const Register = () => {
     const history = useHistory();
-    const { notify } = React.useContext(SnackbarContext)
-    const [firstName, setFirstName] = React.useState("")
-    const [lastName, setLastName] = React.useState("")
+    const { notify } = React.useContext(SnackbarContext);
+    const [firstName, setFirstName] = React.useState("");
+    const [firstNameError, setFirstNameError] = React.useState("");
+    const handleFirstNameChange = (e) => {
+        let value = e.currentTarget.value;
+        setFirstName(value);
+        (value === "") ? setFirstNameError("Should not be empty") : setFirstNameError("")
+    }
+    const [lastName, setLastName] = React.useState("");
+    const [lastNameError, setLastNameError] = React.useState("");
+    const handleLastNameChange = (e) => {
+        let value = e.currentTarget.value;
+        setLastName(value);
+        (value === "") ? setLastNameError("Should not be empty") : setLastNameError("")
+    }
     const [username, setUsername] = React.useState('');
+    const [usernameError, setUsernameError] = React.useState("");
+    const handleUsernameChange = (e) => {
+        let value = e.currentTarget.value;
+        setUsername(value);
+        setUsername(value);
+        (value === "") ? setUsernameError("Should not be empty") : setUsernameError("")
+    }
     const [password, setPassword] = React.useState('');
     const [passwordError, setPasswordError] = React.useState("");
-    const [confirmPassword, setConfirmPPassword] = React.useState('');
+    const handlePasswordChange = (e) => {
+        let value = e.currentTarget.value;
+        setPassword(value);
+        (value === "") ? setPasswordError("Should not be empty") : setPasswordError("")
+    }
+    const [confirmPassword, setConfirmPassword] = React.useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = React.useState("");
+    const handleConfirmPasswordChange = (e) => {
+        let value = e.currentTarget.value;
+        setConfirmPassword(value);
+        (value === "") ? setConfirmPasswordError("Should not be empty") : setConfirmPasswordError("")
+    }
     const { user, setUser } = React.useContext(UserContext);
     const register = () => {
         http.post('/user/register', { firstName, lastName, username, password, confirmPassword })
@@ -28,7 +58,21 @@ const Register = () => {
                 !response.data.error && history.push('/login')
             })
     }
-    const checkPasswordMatch = (e) => {
+    const checkPasswordMatch = () => {
+        if ((password !== "") || (confirmPassword !== "")) {
+            if (password !== confirmPassword) {
+                setPasswordError("Password does not match")
+                setConfirmPasswordError("Password does not match")
+            }
+            if (password === confirmPassword) {
+                if (passwordError === "Password does not match") setPasswordError("");
+                if (confirmPasswordError === "Password does not match") setConfirmPasswordError("");
+            }
+        }
+        if (((password !== "") || (confirmPassword !== "")) && (password !== confirmPassword)) {
+            setPasswordError("Password does not match")
+            setConfirmPassword("Password does not match")
+        }
     }
     React.useEffect(() => {
         if (user) history.push('/');
@@ -41,25 +85,31 @@ const Register = () => {
             </div>
             <Paper className={classes.wrapper}>
                 <TextField
+                    error={!!firstNameError}
+                    helperText={firstNameError}
                     size="small"
                     label="first Name"
                     value={firstName}
                     variant="outlined"
-                    onChange={(e) => setFirstName(e.target.value)}
+                    onChange={handleFirstNameChange}
                 />
                 <TextField
+                    error={!!lastNameError}
+                    helperText={lastNameError}
                     size="small"
                     label="Last Name"
                     value={lastName}
                     variant="outlined"
-                    onChange={(e) => setLastName(e.target.value)}
+                    onChange={handleLastNameChange}
                 />
                 <TextField
+                    error={!!usernameError}
+                    helperText={usernameError}
                     size="small"
                     label="username"
                     value={username}
                     variant="outlined"
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={handleUsernameChange}
                 />
                 <TextField
                     error={!!passwordError}
@@ -69,16 +119,19 @@ const Register = () => {
                     label="password"
                     value={password}
                     variant="outlined"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     onBlur={checkPasswordMatch}
                 />
                 <TextField
+                    error={!!confirmPasswordError}
+                    helperText={confirmPasswordError}
                     size="small"
                     type="password"
                     label="Confirm Password"
                     value={confirmPassword}
                     variant="outlined"
-                    onChange={(e) => setConfirmPPassword(e.target.value)}
+                    onChange={handleConfirmPasswordChange}
+                    onBlur={checkPasswordMatch}
                 />
                 <Button variant="contained" onClick={register}>Register</Button>
                 <p onClick={() => history.push('/login')}>login ?</p>
