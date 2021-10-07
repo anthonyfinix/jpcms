@@ -43,7 +43,13 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
         (value === "") ? setBrandError("Should not be empty") : setBrandError("");
         setBrand(value);
     }
+    //status
     const [status, setStatus] = React.useState(false);
+    const handleStatusChange = (e) => {
+        let value = e.target.value;
+        if (value === 'resolved') return setStatus(true)
+        setStatus(false)
+    };
     // amount
     const [amount, setAmount] = React.useState('')
     const [amountError, setAmountError] = React.useState('')
@@ -57,14 +63,13 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
     const [detailedDescription, setDetailedDescription] = React.useState('');
     const handleReceivedDateChange = (e) => setReceivedDate(e.target.value);
     const handleReturnedDateChange = (e) => setReturnedDate(e.target.value);
-    const handleStatusChange = (e) => setStatus(e.target.value === "resolved" ? true : false);
     const resetInputs = () => {
         setCustomerName("")
         setSerialNumber("")
         setModel("")
         setIssues("")
         setBrand("")
-        setStatus("")
+        setStatus(false)
         setAmount("")
         setReceivedDate(`${moment().format("YYYY")}-${moment().format("MM")}-${moment().format("DD")}`)
         setReturnedDate(`${moment().format("YYYY")}-${moment().format("MM")}-${moment().format("DD")}`)

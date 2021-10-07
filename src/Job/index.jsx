@@ -5,6 +5,8 @@ import JobHeader from './Header';
 import SingleJobDialog from './SingleJobDialog';
 import JobTable from './Table';
 const Job = () => {
+    const [page, setPage] = React.useState(1);
+    const loadMoreJobs = () => { console.log("Loading"); setPage(page + 1) };
     const [isUpdate, setIsUpdate] = React.useState(false)
     const [newDialogIsOpen, setNewDialogBoxIsOpen] = React.useState(false)
     const [singleDialogIsOpen, setSingleDialogBoxIsOpen] = React.useState(false)
@@ -19,14 +21,18 @@ const Job = () => {
     const currentSelectedJobDetails = React.useRef(null);
     const createJob = async (newJob) => {
         let response = await http.post('/service', { ...newJob })
+        console.log(response)
         if (!response.error) {
             handleNewJobDialogClose();
             let response = await http.get('/service');
             setServices(response.data.result);
+            currentSelectedJobDetails.current = null;
         }
         return response;
     }
     const updateJob = async (updatedJob) => {
+        console.log("Update Job")
+        console.log(updateJob)
         let response = await http.put('/service', { ...updatedJob })
         if (!response.error) {
             handleNewJobDialogClose();
@@ -34,7 +40,6 @@ const Job = () => {
             setServices(response.data.result);
             currentSelectedJobDetails.current = null;
         }
-        setIsUpdate(false)
         return response;
     }
     const deleteJob = async () => {
@@ -49,11 +54,16 @@ const Job = () => {
         handleNewJobDialogOpen()
         setIsUpdate(true)
     }
-    const handleDeleteJob = ()=>{
+    const handleDeleteJob = () => {
         deleteJob();
     }
     React.useEffect(() => {
-        http.get('/service').then(response => {
+        http.get('/service', { params: { page } }).then(response => {
+            setServices((services) => [...services, ...response.data.result])
+        })
+    }, [page])
+    React.useEffect(() => {
+        http.get('/service', { params: { page } }).then(response => {
             setServices(response.data.result);
         })
     }, [])
@@ -67,6 +77,7 @@ const Job = () => {
                 handleViewJob={handleViewJob}
                 handleUpdate={handleUpdateJob}
                 handleDelete={handleDeleteJob}
+                loadMore={loadMoreJobs}
             />
             <NewJobDialogBox
                 open={newDialogIsOpen}

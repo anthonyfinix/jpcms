@@ -12,6 +12,9 @@ import MenuItem from '@mui/material/MenuItem';
 import { WindowWidthContext } from '../../WindowWidthProvider';
 import moment from 'moment';
 const JobTable = (props) => {
+    const handleOnScrollEnd = (entry) => entry.isIntersecting && props.loadMore();
+    const scrollObserver = React.useRef(new IntersectionObserver((entries) => handleOnScrollEnd(entries[0]), { threshold: 1 }))
+    const [scrollElement, setScrollElement] = React.useState(null);
     const { width } = React.useContext(WindowWidthContext);
     const [currentRowEl, setCurrentRowEl] = React.useState(null);
     const handleOptionClick = (e, job) => { setCurrentRowEl(e.target); props.selected.current = job }
@@ -27,6 +30,11 @@ const JobTable = (props) => {
         props.handleDelete()
         setCurrentRowEl(null);
     }
+    React.useEffect(() => {
+        let currentElement = scrollElement;
+        let observer = scrollObserver.current;
+        if (currentElement) observer.observe(currentElement);
+    }, [scrollElement])
     return (
         <>
             <TableContainer className={`${classes.wrapper}`}>
@@ -46,14 +54,15 @@ const JobTable = (props) => {
                             <TableRow key={job._id}>
                                 <TableCell className={classes.td} component="th" scope="row">{job.customerName}</TableCell>
                                 {(width > 600) && <TableCell className={`${classes.cell} ${classes.th}`}>{job.serialNumber}</TableCell>}
-                                {(width > 600) && <TableCell className={`${classes.cell} ${classes.th}`}>{ moment(job.receivedDate).format("Do MMM YY")}</TableCell>}
-                                {(width > 600) && <TableCell className={`${classes.cell} ${classes.th}`}>{ moment(job.returnedDate).format("Do MMM YY")}</TableCell>}
+                                {(width > 600) && <TableCell className={`${classes.cell} ${classes.th}`}>{moment(job.receivedDate).format("Do MMM YY")}</TableCell>}
+                                {(width > 600) && <TableCell className={`${classes.cell} ${classes.th}`}>{moment(job.returnedDate).format("Do MMM YY")}</TableCell>}
                                 {(width > 600) && <TableCell className={`${classes.cell} ${classes.th}`}>{job.amount}</TableCell>}
                                 <TableCell className={`${classes.td} ${classes.opt_cell}`} component="th" scope="row"><MoreVertIcon onClick={(e) => handleOptionClick(e, job)} /></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
+                <div ref={setScrollElement} class={`${classes.loadingWrapper}`}>loading</div>
             </TableContainer>
 
             <Menu
