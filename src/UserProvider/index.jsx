@@ -1,5 +1,6 @@
 import React from "react"
 import http from "../util/axios";
+import LoadingSpinner from '../shared/LoadingSpinner';
 export const UserContext = React.createContext(null);
 const UserProvider = (props) => {
     const [user, setUser] = React.useState(null);
@@ -14,7 +15,7 @@ const UserProvider = (props) => {
             setIsLoading(false)
         }
     }, [])
-    if (isLoading) return <h1>Loading User</h1>
+    if (isLoading) return <LoadingSpinner/>
     return <UserContext.Provider value={{ user, setUser, isUserLoading: isLoading, setIsUserLoading: setIsLoading }}>{props.children}</UserContext.Provider>
 }
 export default UserProvider
