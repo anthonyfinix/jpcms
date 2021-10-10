@@ -4,13 +4,18 @@ import NewJobDialogBox from '../Job/NewJobDialogBox';
 import JobHeader from './Header';
 import SingleJobDialog from './SingleJobDialog';
 import JobTable from './Table';
+import getSearchedJobs from './api/getSearchedJobs';
 const Job = () => {
+    const [services, setServices] = React.useState([]);
+    const [searchTerm, setSearchTerm] = React.useState("");
+    const handleSearchInputChange = (e) => setSearchTerm(e.currentTarget.value);
+    const [searchResults, setSearchResults] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(false);
     const [page, setPage] = React.useState(1);
-    const loadMoreJobs = () => { console.log("Loading"); setPage(page + 1) };
+    const loadMoreJobs = () => setPage(currentPage => currentPage + 1);
     const [isUpdate, setIsUpdate] = React.useState(false)
     const [newDialogIsOpen, setNewDialogBoxIsOpen] = React.useState(false)
     const [singleDialogIsOpen, setSingleDialogBoxIsOpen] = React.useState(false)
-    const [services, setServices] = React.useState([]);
     const handleNewJobDialogClose = () => {
         setNewDialogBoxIsOpen(false);
         if (isUpdate) setIsUpdate(false)
@@ -21,7 +26,6 @@ const Job = () => {
     const currentSelectedJobDetails = React.useRef(null);
     const createJob = async (newJob) => {
         let response = await http.post('/service', { ...newJob })
-        console.log(response)
         if (!response.error) {
             handleNewJobDialogClose();
             let response = await http.get('/service');
@@ -31,8 +35,6 @@ const Job = () => {
         return response;
     }
     const updateJob = async (updatedJob) => {
-        console.log("Update Job")
-        console.log(updateJob)
         let response = await http.put('/service', { ...updatedJob })
         if (!response.error) {
             handleNewJobDialogClose();
@@ -58,26 +60,40 @@ const Job = () => {
         deleteJob();
     }
     React.useEffect(() => {
-        http.get('/service', { params: { page } }).then(response => {
-            setServices((services) => [...services, ...response.data.result])
-        })
+        getSearchedJobs(searchTerm)
+            .then(response => setSearchResults(response.data.result))
+    }, [searchTerm])
+    React.useEffect(() => {
+        setIsLoading(true);
+        http.get('/service', { params: { page } })
+            .then(response => {
+                setIsLoading(false);
+                setServices((services) => [...services, ...response.data.result])
+            })
     }, [page])
     React.useEffect(() => {
-        http.get('/service', { params: { page } }).then(response => {
-            setServices(response.data.result);
-        })
+        setIsLoading(true);
+        http.get('/service', { params: { page } })
+            .then(response => {
+                setIsLoading(false);
+                setServices(response.data.result);
+            })
     }, [])
 
     return (
         <>
-            <JobHeader addNew={handleNewJobDialogOpen} />
+            <JobHeader
+                addNew={handleNewJobDialogOpen}
+                handleSearch={handleSearchInputChange}
+            />
             <JobTable
-                jobs={services}
+                jobs={searchTerm ? searchResults : services}
                 selected={currentSelectedJobDetails}
                 handleViewJob={handleViewJob}
                 handleUpdate={handleUpdateJob}
                 handleDelete={handleDeleteJob}
                 loadMore={loadMoreJobs}
+                isLoading={isLoading}
             />
             <NewJobDialogBox
                 open={newDialogIsOpen}

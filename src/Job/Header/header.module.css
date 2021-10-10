@@ -2,4 +2,10 @@
     height: 50px;
     padding-right: 10px ;
     padding-left: 10px ;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.addNewBtn{
+    margin-left: auto;
 }
