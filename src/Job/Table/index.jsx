@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,10 +10,11 @@ import classes from './table.module.scss';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import LoadingSpinner from '../../shared/LoadingSpinner';
 import { WindowWidthContext } from '../../WindowWidthProvider';
-import moment from 'moment';
+
 const JobTable = (props) => {
-    const handleOnScrollEnd = (entry) => entry.isIntersecting && props.loadMore();
+    const handleOnScrollEnd = (entry) => entry.isIntersecting && !props.isLoading && props.loadMore();
     const scrollObserver = React.useRef(new IntersectionObserver((entries) => handleOnScrollEnd(entries[0]), { threshold: 1 }))
     const [scrollElement, setScrollElement] = React.useState(null);
     const { width } = React.useContext(WindowWidthContext);
@@ -62,7 +64,7 @@ const JobTable = (props) => {
                         ))}
                     </TableBody>
                 </Table>
-                <div ref={setScrollElement} class={`${classes.loadingWrapper}`}>loading</div>
+                <div ref={setScrollElement} class={`${classes.loadingWrapper}`}> {props.isLoading && <LoadingSpinner />} </div>
             </TableContainer>
 
             <Menu
