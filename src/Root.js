@@ -1,4 +1,3 @@
-import './Root.css';
 import SnackbarProvider from './shared/SnackbarProvider';
 import { BrowserRouter } from 'react-router-dom';
 import MainRouter from './route';

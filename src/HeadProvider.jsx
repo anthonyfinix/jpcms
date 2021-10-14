@@ -3,7 +3,7 @@ const HeadProvider = ({children}) => {
     return (
         <HelmetProvider>
                 <Helmet>
-                    <title>CMS</title>
+                    <title>Catalog</title>
                 </Helmet>
                 {children}
         </HelmetProvider>

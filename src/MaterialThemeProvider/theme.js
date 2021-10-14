@@ -1,8 +1,12 @@
-import { createTheme } from '@mui/material/styles'
+import { createTheme } from '@mui/material/styles';
+import { blue } from '@mui/material/colors'
 export default createTheme({
+  typography: {
+    fontFamily: ['Open Sans'].join(','),
+  },
   palette: {
     primary: {
-      main: '#0052cc',
+      main: blue[800],
     },
     secondary: {
       main: '#edf2ff',

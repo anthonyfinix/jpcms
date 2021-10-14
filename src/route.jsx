@@ -8,7 +8,7 @@ const MainRouter = () => {
         <Switch>
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
-            <Route exact path="/" component={App} />
+            <Route path="/" component={App} />
         </Switch>
     )
 }

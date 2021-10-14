@@ -1,0 +1,23 @@
+@use "../functions" as *;
+@mixin padding($difference, $classes) {
+  @each $class, $size in getSizeMap($difference, $classes) {
+    .p-0 {
+      padding: 0em;
+    }
+    .p-#{$class} {
+      padding: #{$size}em;
+    }
+    .pt-#{$class} {
+      padding-top: #{$size}em;
+    }
+    .pr-#{$class} {
+      padding-right: #{$size}em;
+    }
+    .pl-#{$class} {
+      padding-left: #{$size}em;
+    }
+    .pb-#{$class} {
+      padding-bottom: #{$size}em;
+    }
+  }
+}

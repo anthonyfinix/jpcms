@@ -9,6 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 const UserWidget = ({ children, className, ...props }) => {
     const { user, setUser } = React.useContext(UserContext);
     const history = useHistory()
+    const handleProfileClick = ()=>history.push('/profile')
     const handleMenuClick = (event) => {
         if (!user) return history.push('/login');
         setAnchorEl(event.currentTarget)
@@ -26,7 +27,7 @@ const UserWidget = ({ children, className, ...props }) => {
                 <AccountCircleIcon />
             </IconButton>
             <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-                {user && <MenuItem onClick={handleMenuClose}>{user.username}</MenuItem>}
+                {user && <MenuItem onClick={handleProfileClick}>{user.username}</MenuItem>}
                 <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
             </Menu>
         </div>

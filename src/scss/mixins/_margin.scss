@@ -1,0 +1,27 @@
+
+@use "../functions" as *;
+@mixin margin($difference, $classes) {
+  @each $class, $size in getSizeMap($difference, $classes) {
+    .m-auto{
+      margin:auto;
+    }
+    .m-0{
+      margin: 0em;
+    }
+    .m-#{$class} {
+      margin: #{$size}em;
+    }
+    .mt-#{$class}{
+      margin-top: #{$size}em;
+    }
+    .mr-#{$class}{
+      margin-right: #{$size}em;
+    }
+    .ml-#{$class}{
+      margin-left: #{$size}em;
+    }
+    .mb-#{$class}{
+      margin-bottom: #{$size}em;
+    }
+  }
+}

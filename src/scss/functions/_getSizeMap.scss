@@ -1,0 +1,15 @@
+@use "sass:map";
+@function getSizeMap($difference, $classes) {
+  $sizeMap: ();
+  $previousValue: $difference;
+  @for $i from 1 through length($classes) {
+    $previousValue: $difference + $previousValue;
+    $sizeMap: map.merge(
+      $sizeMap,
+      (
+        nth($classes, $i): $previousValue,
+      )
+    );
+  }
+  @return $sizeMap;
+}

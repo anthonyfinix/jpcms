@@ -1,18 +1,25 @@
 import React from 'react';
 import http from '../util/axios';
+import getJobs from './api/getJobs';
 import NewJobDialogBox from '../Job/NewJobDialogBox';
+import { SnackbarContext } from '../shared/SnackbarProvider';
 import JobHeader from './Header';
 import SingleJobDialog from './SingleJobDialog';
 import JobTable from './Table';
 import getSearchedJobs from './api/getSearchedJobs';
+import addJob from './api/addJob';
 const Job = () => {
+    const { notify } = React.useContext(SnackbarContext)
     const [services, setServices] = React.useState([]);
     const [searchTerm, setSearchTerm] = React.useState("");
     const handleSearchInputChange = (e) => setSearchTerm(e.currentTarget.value);
     const [searchResults, setSearchResults] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const [page, setPage] = React.useState(1);
-    const loadMoreJobs = () => setPage(currentPage => currentPage + 1);
+    const loadMoreJobs = () => {
+        console.log('load more')
+        setPage(currentPage => currentPage + 1)
+    };
     const [isUpdate, setIsUpdate] = React.useState(false)
     const [newDialogIsOpen, setNewDialogBoxIsOpen] = React.useState(false)
     const [singleDialogIsOpen, setSingleDialogBoxIsOpen] = React.useState(false)
@@ -25,10 +32,10 @@ const Job = () => {
     const handleSingleJobDialogClose = () => { setSingleDialogBoxIsOpen(false); currentSelectedJobDetails.current = null; }
     const currentSelectedJobDetails = React.useRef(null);
     const createJob = async (newJob) => {
-        let response = await http.post('/service', { ...newJob })
+        let response = await addJob({ ...newJob })
         if (!response.error) {
             handleNewJobDialogClose();
-            let response = await http.get('/service');
+            let response = await getJobs()
             setServices(response.data.result);
             currentSelectedJobDetails.current = null;
         }
@@ -46,7 +53,7 @@ const Job = () => {
     }
     const deleteJob = async () => {
         await http.delete(`/service/${currentSelectedJobDetails.current._id}`);
-        let response = await http.get('/service')
+        let response = await getJobs({ limit: (page * 10) })
         setServices(response.data.result)
     }
     const handleViewJob = () => {
@@ -65,16 +72,21 @@ const Job = () => {
     }, [searchTerm])
     React.useEffect(() => {
         setIsLoading(true);
-        http.get('/service', { params: { page } })
+        getJobs({ page })
             .then(response => {
+                let { error } = response;
+                if (error) return notify(error);
                 setIsLoading(false);
-                setServices((services) => [...services, ...response.data.result])
+                setServices((services) => [...services, ...response.data.result]);
+
             })
     }, [page])
     React.useEffect(() => {
         setIsLoading(true);
-        http.get('/service', { params: { page } })
+        getJobs()
             .then(response => {
+                let { error } = response;
+                if (error) return notify(error);
                 setIsLoading(false);
                 setServices(response.data.result);
             })
