@@ -1,4 +1,4 @@
-import { Snackbar } from "@material-ui/core";
+import Snackbar from "@mui/material/Snackbar";
 import React from "react";
 
 export const SnackbarContext = React.createContext("");

@@ -159,7 +159,7 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
                 <div className={classes.actionWrapper}>
                     <Button onClick={handleDialogClose}> Close </Button>
                     <Button
-                        disabled={modelError || customerNameError || issueError || amountError}
+                        disabled={!!(modelError || customerNameError || issueError || amountError)}
                         variant="contained"
                         onClick={handleSubmit}>
                         {isUpdate ? "Update" : "Add New Job"}

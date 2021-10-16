@@ -9,7 +9,8 @@ import JobTable from './Table';
 import getSearchedJobs from './api/getSearchedJobs';
 import addJob from './api/addJob';
 const Job = () => {
-    const { notify } = React.useContext(SnackbarContext)
+    const { notify } = React.useContext(SnackbarContext);
+    const [serviceError, setServiceError] = React.useState(false);
     const [services, setServices] = React.useState([]);
     const [searchTerm, setSearchTerm] = React.useState("");
     const handleSearchInputChange = (e) => setSearchTerm(e.currentTarget.value);
@@ -17,7 +18,6 @@ const Job = () => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [page, setPage] = React.useState(1);
     const loadMoreJobs = () => {
-        console.log('load more')
         setPage(currentPage => currentPage + 1)
     };
     const [isUpdate, setIsUpdate] = React.useState(false)
@@ -74,10 +74,14 @@ const Job = () => {
         setIsLoading(true);
         getJobs({ page })
             .then(response => {
-                let { error } = response;
-                if (error) return notify(error);
-                setIsLoading(false);
-                setServices((services) => [...services, ...response.data.result]);
+                let { error } = response.data;
+                if (error) {
+                    setServiceError(error);
+                    return notify(error);
+                } else {
+                    setIsLoading(false);
+                    setServices((services) => [...services, ...response.data.result]);
+                }
 
             })
     }, [page])
@@ -85,8 +89,11 @@ const Job = () => {
         setIsLoading(true);
         getJobs()
             .then(response => {
-                let { error } = response;
-                if (error) return notify(error);
+                let { error } = response.data;
+                if (error) {
+                    setServiceError(error);
+                    return notify(error);
+                }
                 setIsLoading(false);
                 setServices(response.data.result);
             })
@@ -94,32 +101,39 @@ const Job = () => {
 
     return (
         <>
-            <JobHeader
-                addNew={handleNewJobDialogOpen}
-                handleSearch={handleSearchInputChange}
-            />
-            <JobTable
-                jobs={searchTerm ? searchResults : services}
-                selected={currentSelectedJobDetails}
-                handleViewJob={handleViewJob}
-                handleUpdate={handleUpdateJob}
-                handleDelete={handleDeleteJob}
-                loadMore={loadMoreJobs}
-                isLoading={isLoading}
-            />
-            <NewJobDialogBox
-                open={newDialogIsOpen}
-                handleClose={handleNewJobDialogClose}
-                createJob={createJob}
-                updateJob={updateJob}
-                selected={currentSelectedJobDetails.current}
-                isUpdate={isUpdate}
-            />
-            <SingleJobDialog
-                open={singleDialogIsOpen}
-                handleClose={handleSingleJobDialogClose}
-                job={currentSelectedJobDetails.current}
-            />
+            {
+                serviceError ? <h1>{serviceError}</h1> : (
+                    <>
+                        <JobHeader
+                            addNew={handleNewJobDialogOpen}
+                            handleSearch={handleSearchInputChange}
+                        />
+                        <JobTable
+                            jobs={searchTerm ? searchResults : services}
+                            selected={currentSelectedJobDetails}
+                            handleViewJob={handleViewJob}
+                            handleUpdate={handleUpdateJob}
+                            handleDelete={handleDeleteJob}
+                            loadMore={loadMoreJobs}
+                            isLoading={isLoading}
+                        />
+                        <NewJobDialogBox
+                            open={newDialogIsOpen}
+                            handleClose={handleNewJobDialogClose}
+                            createJob={createJob}
+                            updateJob={updateJob}
+                            selected={currentSelectedJobDetails.current}
+                            isUpdate={isUpdate}
+                        />
+
+                        <SingleJobDialog
+                            open={singleDialogIsOpen}
+                            handleClose={handleSingleJobDialogClose}
+                            job={currentSelectedJobDetails.current}
+                        />
+                    </>
+                )
+            }
         </>
     )
 }

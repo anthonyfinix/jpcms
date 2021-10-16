@@ -64,7 +64,7 @@ const JobTable = (props) => {
                         ))}
                     </TableBody>
                 </Table>
-                <div ref={setScrollElement} class={`${classes.loadingWrapper}`}> {props.isLoading && <LoadingSpinner />} </div>
+                <div ref={setScrollElement} className={`${classes.loadingWrapper}`}> {props.isLoading && <LoadingSpinner />} </div>
             </TableContainer>
 
             <Menu

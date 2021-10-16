@@ -5,21 +5,27 @@ import UserProvider from './UserProvider/index';
 import MaterialThemeProvider from './MaterialThemeProvider'
 import HeadProvider from './HeadProvider';
 import WindowWidthProvider from './WindowWidthProvider';
+import ReduxProvider from './redux';
+import CompanyProvider from './company/provider';
 function Root() {
   return (
     <>
-      <WindowWidthProvider>
-        <HeadProvider />
-        <MaterialThemeProvider>
-          <UserProvider>
-            <BrowserRouter>
-              <SnackbarProvider>
-                <MainRouter />
-              </SnackbarProvider>
-            </BrowserRouter>
-          </UserProvider>
-        </MaterialThemeProvider>
-      </WindowWidthProvider>
+      <ReduxProvider>
+        <WindowWidthProvider>
+          <HeadProvider />
+          <MaterialThemeProvider>
+            <CompanyProvider>
+              <UserProvider>
+                <BrowserRouter>
+                  <SnackbarProvider>
+                    <MainRouter />
+                  </SnackbarProvider>
+                </BrowserRouter>
+              </UserProvider>
+            </CompanyProvider>
+          </MaterialThemeProvider>
+        </WindowWidthProvider>
+      </ReduxProvider>
     </>
   );
 }
