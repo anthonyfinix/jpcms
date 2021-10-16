@@ -104,7 +104,7 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
     }, [isUpdate])
     return (
         <Dialog open={open} fullWidth={true} onClose={handleDialogClose}>
-            <div className="add-new-service-wrapper">
+            <div className={`${classes.main_wrapper}`}>
                 <TextField
                     error={!!customerNameError}
                     helperText={customerNameError}

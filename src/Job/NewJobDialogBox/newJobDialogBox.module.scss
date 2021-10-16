@@ -1,4 +1,10 @@
-.actionWrapper{
-    display: flex;
-    justify-content: space-between;
+.main_wrapper {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.actionWrapper {
+  display: flex;
+  justify-content: space-between;
 }
