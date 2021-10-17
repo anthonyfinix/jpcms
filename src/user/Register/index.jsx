@@ -4,12 +4,12 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import http from '../util/axios';
-import { UserContext } from '../UserProvider';
+import http from '../../util/axios';
+import { UserContext } from '../../UserProvider';
 import { useHistory } from 'react-router';
 import classes from './register.module.scss';
-import logo from '../assets/vectors/logo.svg';
-import { SnackbarContext } from '../shared/SnackbarProvider';
+import logo from '../../assets/vectors/logo.svg';
+import { SnackbarContext } from '../../shared/SnackbarProvider';
 
 const Register = () => {
     const history = useHistory();

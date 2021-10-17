@@ -1,7 +1,7 @@
 import { Switch, Route } from 'react-router-dom'
 import App from "./App";
-import Login from "./Login";
-import Register from './Register';
+import Login from "./user/Login";
+import Register from './user/Register';
 
 const MainRouter = () => {
     return (
