@@ -15,18 +15,23 @@ import { WindowWidthContext } from '../../WindowWidthProvider';
 
 const JobTable = (props) => {
     const handleOnScrollEnd = (entry) => entry.isIntersecting && !props.isLoading && props.loadMore();
+    const [selectedRow,setSelectedRow] = React.useState(null)
     const scrollObserver = React.useRef(new IntersectionObserver((entries) => handleOnScrollEnd(entries[0]), { threshold: 1 }))
     const [scrollElement, setScrollElement] = React.useState(null);
     const { width } = React.useContext(WindowWidthContext);
     const [currentRowEl, setCurrentRowEl] = React.useState(null);
-    const handleOptionClick = (e, job) => { setCurrentRowEl(e.target); props.selected.current = job }
+    const handleOptionClick = (e, job) => {
+        setCurrentRowEl(e.target);
+        setSelectedRow(job)
+    }
     const handleView = () => {
-        props.handleViewJob()
+        props.handleViewJob(selectedRow)
         setCurrentRowEl(null);
     }
     const handleUpdate = () => {
-        props.handleUpdate()
+        props.handleUpdate(selectedRow)
         setCurrentRowEl(null);
+        setSelectedRow(null)
     }
     const handleDelete = () => {
         props.handleDelete()

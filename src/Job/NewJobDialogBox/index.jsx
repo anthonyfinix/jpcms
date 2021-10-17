@@ -8,8 +8,9 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import moment from "moment";
 import classes from './newJobDialogBox.module.scss'
+import { connect } from 'react-redux';
 
-const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, isUpdate }) => {
+const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, isUpdate, currentJob, ...props }) => {
     // customer
     const [customerName, setCustomerName] = React.useState('');
     const [customerNameError, setCustomerNameError] = React.useState("")
@@ -76,7 +77,7 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
         setDetailedDescription("")
     }
     const handleSubmit = () => {
-        if (isUpdate) {
+        if (currentJob) {
             handleJobUpdate().then(() => resetInputs())
         } else {
             handleJobCreate().then(() => resetInputs())
@@ -87,23 +88,25 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
         handleClose();
     }
     const handleJobCreate = () => createJob({ customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription });
-    const handleJobUpdate = () => updateJob({ id: selected._id, customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription });
+    const handleJobUpdate = () => updateJob({ id: currentJob._id, customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription });
     React.useEffect(() => {
-        if (isUpdate && selected) {
-            setCustomerName(selected.customerName);
-            setSerialNumber(selected.serialNumber);
-            setModel(selected.model);
-            setIssues(selected.issues);
-            setBrand(selected.brand);
-            setStatus(selected.status);
-            setAmount(selected.amount);
-            setReceivedDate(`${moment(selected.receivedDate).format('YYYY')}-${moment(selected.receivedDate).format("MM")}-${moment(selected.receivedDate).format("DD")}`);
-            setReturnedDate(`${moment(selected.returnedDate).format("YYYY")}-${moment(selected.returnedDate).format("MM")}-${moment(selected.returnedDate).format("DD")}`);
-            setDetailedDescription(selected.detailedDescription);
-        }
-    }, [isUpdate])
+        setCustomerName(currentJob.customerName);
+        setSerialNumber(currentJob.serialNumber);
+        setModel(currentJob.model);
+        setIssues(currentJob.issues);
+        setBrand(currentJob.brand);
+        setStatus(currentJob.status);
+        setAmount(currentJob.amount);
+        setReceivedDate(`${moment(currentJob.receivedDate).format('YYYY')}-${moment(currentJob.receivedDate).format("MM")}-${moment(currentJob.receivedDate).format("DD")}`);
+        setReturnedDate(`${moment(currentJob.returnedDate).format("YYYY")}-${moment(currentJob.returnedDate).format("MM")}-${moment(currentJob.returnedDate).format("DD")}`);
+        setDetailedDescription(currentJob.detailedDescription);
+    }, [currentJob])
     return (
-        <Dialog open={open} fullWidth={true} onClose={handleDialogClose}>
+        <Dialog
+            open={open}
+            fullWidth={true}
+            onClose={handleDialogClose}
+        >
             <div className={`${classes.main_wrapper}`}>
                 <TextField
                     error={!!customerNameError}
@@ -114,13 +117,47 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
                     label="Customer Name"
                     variant="outlined"
                 />
-                <TextField size="small" value={serialNumber} onChange={e => setSerialNumber(e.target.value)} label="Serial Number" variant="outlined" type="number" />
-                <TextField error={!!modelError} helperText={modelError} size="small" value={model} onChange={handleModelChange} label="Model" variant="outlined" />
-                <TextField error={!!issueError} helperText={issueError} size="small" value={issues} onChange={handleIssueChange} label="Issues" variant="outlined" />
-                <TextField error={!!brandError} helperText={brandError} size="small" value={brand} onChange={handleBrandChange} label="Brand" variant="outlined" />
+                <TextField
+                    size="small"
+                    value={serialNumber}
+                    onChange={e => setSerialNumber(e.target.value)}
+                    label="Serial Number"
+                    variant="outlined"
+                    type="number"
+                />
+                <TextField
+                    error={!!modelError}
+                    helperText={modelError}
+                    size="small"
+                    value={model}
+                    onChange={handleModelChange}
+                    label="Model"
+                    variant="outlined"
+                />
+                <TextField
+                    error={!!issueError}
+                    helperText={issueError}
+                    size="small"
+                    value={issues}
+                    onChange={handleIssueChange}
+                    label="Issues"
+                    variant="outlined"
+                />
+                <TextField
+                    error={!!brandError}
+                    helperText={brandError}
+                    size="small"
+                    value={brand}
+                    onChange={handleBrandChange}
+                    label="Brand"
+                    variant="outlined"
+                />
                 <FormControl variant="outlined" size="small">
                     <InputLabel id="demo-simple-select-outlined-label">Status</InputLabel>
-                    <Select value={status === true ? "resolved" : "returned"} onChange={handleStatusChange}>
+                    <Select
+                    // value={status === true ? "resolved" : "returned"}
+                    // onChange={handleStatusChange}
+                    >
                         <MenuItem value="resolved">Resolved</MenuItem>
                         <MenuItem value="returned">Return</MenuItem>
                     </Select>
@@ -155,18 +192,30 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
                     }}
                     onChange={handleReturnedDateChange}
                 />
-                <TextField value={detailedDescription} onChange={e => setDetailedDescription(e.target.value)} size="small" label="Detailed Description" multiline variant="outlined" />
+                <TextField
+                    value={detailedDescription}
+                    onChange={e => setDetailedDescription(e.target.value)}
+                    size="small"
+                    label="Detailed Description"
+                    multiline
+                    variant="outlined"
+                />
                 <div className={classes.actionWrapper}>
-                    <Button onClick={handleDialogClose}> Close </Button>
+                    <Button
+                        onClick={handleDialogClose}
+                    >
+                        Close
+                    </Button>
                     <Button
                         disabled={!!(modelError || customerNameError || issueError || amountError)}
                         variant="contained"
-                        onClick={handleSubmit}>
-                        {isUpdate ? "Update" : "Add New Job"}
+                        onClick={handleSubmit}
+                    >
+                        {currentJob._id ? "Update" : "Add New Job"}
                     </Button>
                 </div>
             </div>
-        </Dialog>
+        </Dialog >
     )
 }
 export default NewJobDialogBox;

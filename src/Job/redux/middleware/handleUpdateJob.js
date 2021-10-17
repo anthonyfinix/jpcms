@@ -7,6 +7,7 @@ import startFetchingJobs from "../action/startJobsFetching";
 import stopFetchingJobs from "../action/stopJobsFetching";
 import updateCurrentJob from "../action/updateCurrentJob";
 const handleUpdateJob = (company, currentJob) => async (dispatch) => {
+    console.log(currentJob)
     dispatch(startFetchingJobs())
     let response = await updateJob(company, currentJob);
     if(response.error) dispatch(setJobError(response.error))

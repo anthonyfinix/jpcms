@@ -1,3 +1,3 @@
 import updateCurrentJob from "../action/updateCurrentJob";
-const handleAddJob = (job) => async (dispatch) => dispatch(updateCurrentJob(job));
-export default handleAddJob;
+const handleUpdateCurrentJob = (job) => (dispatch) => dispatch(updateCurrentJob(job));
+export default handleUpdateCurrentJob;
