@@ -8,7 +8,8 @@ import SingleJobDialog from './SingleJobDialog';
 import JobTable from './Table';
 import getSearchedJobs from './api/getSearchedJobs';
 import addJob from './api/addJob';
-const Job = () => {
+import { connect } from 'react-redux';
+const Job = (props) => {
     const { notify } = React.useContext(SnackbarContext);
     const [serviceError, setServiceError] = React.useState(false);
     const [services, setServices] = React.useState([]);
@@ -35,7 +36,7 @@ const Job = () => {
         let response = await addJob({ ...newJob })
         if (!response.error) {
             handleNewJobDialogClose();
-            let response = await getJobs()
+            let response = await getJobs(props.currentCompany)
             setServices(response.data.result);
             currentSelectedJobDetails.current = null;
         }
@@ -53,7 +54,7 @@ const Job = () => {
     }
     const deleteJob = async () => {
         await http.delete(`/service/${currentSelectedJobDetails.current._id}`);
-        let response = await getJobs({ limit: (page * 10) })
+        let response = await getJobs(props.currentCompany,{ limit: (page * 10) })
         setServices(response.data.result)
     }
     const handleViewJob = () => {
@@ -72,7 +73,7 @@ const Job = () => {
     }, [searchTerm])
     React.useEffect(() => {
         setIsLoading(true);
-        getJobs({ page })
+        getJobs(props.currentCompany,{ page })
             .then(response => {
                 let { error } = response.data;
                 if (error) {
@@ -87,7 +88,7 @@ const Job = () => {
     }, [page])
     React.useEffect(() => {
         setIsLoading(true);
-        getJobs()
+        getJobs(props.currentCompany)
             .then(response => {
                 let { error } = response.data;
                 if (error) {
@@ -137,4 +138,5 @@ const Job = () => {
         </>
     )
 }
-export default Job;
+const mapStateToProps = state => ({ currentCompany: state.COMPANY.currentCompany });
+export default connect(mapStateToProps, null)(Job);
