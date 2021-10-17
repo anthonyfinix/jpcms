@@ -7,6 +7,7 @@ import JobHeader from './Header';
 import SingleJobDialog from './SingleJobDialog';
 import JobTable from './Table';
 import getSearchedJobs from './api/getSearchedJobs';
+import updateJob from './api/updateJob';
 import addJob from './api/addJob';
 import { connect } from 'react-redux';
 const Job = (props) => {
@@ -33,20 +34,20 @@ const Job = (props) => {
     const handleSingleJobDialogClose = () => { setSingleDialogBoxIsOpen(false); currentSelectedJobDetails.current = null; }
     const currentSelectedJobDetails = React.useRef(null);
     const createJob = async (newJob) => {
-        let response = await addJob({ ...newJob })
+        let response = await addJob(props.company, { ...newJob })
         if (!response.error) {
             handleNewJobDialogClose();
-            let response = await getJobs(props.currentCompany)
+            let response = await getJobs(props.company)
             setServices(response.data.result);
             currentSelectedJobDetails.current = null;
         }
         return response;
     }
-    const updateJob = async (updatedJob) => {
-        let response = await http.put('/service', { ...updatedJob })
+    const handleUpdateJob = async (updatedJobDetails) => {
+        let response = await updateJob(props.company, { ...updatedJobDetails })
         if (!response.error) {
             handleNewJobDialogClose();
-            let response = await http.get('/service');
+            let response = await getJobs(props.company);
             setServices(response.data.result);
             currentSelectedJobDetails.current = null;
         }
@@ -54,13 +55,13 @@ const Job = (props) => {
     }
     const deleteJob = async () => {
         await http.delete(`/service/${currentSelectedJobDetails.current._id}`);
-        let response = await getJobs(props.currentCompany,{ limit: (page * 10) })
+        let response = await getJobs(props.company, { limit: (page * 10) })
         setServices(response.data.result)
     }
     const handleViewJob = () => {
         handleSingleJobDialogOpen();
     }
-    const handleUpdateJob = () => {
+    const editJob = () => {
         handleNewJobDialogOpen()
         setIsUpdate(true)
     }
@@ -68,12 +69,12 @@ const Job = (props) => {
         deleteJob();
     }
     React.useEffect(() => {
-        getSearchedJobs(searchTerm)
+        getSearchedJobs(props.company, searchTerm)
             .then(response => setSearchResults(response.data.result))
     }, [searchTerm])
     React.useEffect(() => {
         setIsLoading(true);
-        getJobs(props.currentCompany,{ page })
+        getJobs(props.company, { page })
             .then(response => {
                 let { error } = response.data;
                 if (error) {
@@ -88,7 +89,7 @@ const Job = (props) => {
     }, [page])
     React.useEffect(() => {
         setIsLoading(true);
-        getJobs(props.currentCompany)
+        getJobs(props.company)
             .then(response => {
                 let { error } = response.data;
                 if (error) {
@@ -113,7 +114,7 @@ const Job = (props) => {
                             jobs={searchTerm ? searchResults : services}
                             selected={currentSelectedJobDetails}
                             handleViewJob={handleViewJob}
-                            handleUpdate={handleUpdateJob}
+                            handleUpdate={editJob}
                             handleDelete={handleDeleteJob}
                             loadMore={loadMoreJobs}
                             isLoading={isLoading}
@@ -122,7 +123,7 @@ const Job = (props) => {
                             open={newDialogIsOpen}
                             handleClose={handleNewJobDialogClose}
                             createJob={createJob}
-                            updateJob={updateJob}
+                            updateJob={handleUpdateJob}
                             selected={currentSelectedJobDetails.current}
                             isUpdate={isUpdate}
                         />
@@ -138,5 +139,5 @@ const Job = (props) => {
         </>
     )
 }
-const mapStateToProps = state => ({ currentCompany: state.COMPANY.currentCompany });
+const mapStateToProps = state => ({ company: state.COMPANY.currentCompany });
 export default connect(mapStateToProps, null)(Job);

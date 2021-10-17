@@ -1,7 +1,7 @@
 import http from '../../util/axios';
-const addJob = async (data) => {
+const addJob = async (company,data) => {
     try {
-        return await http.post('/service', data)
+        return await http.post(`/service?company=${company.name}`, data)
     } catch (e) {
         return { error: e.message }
     }

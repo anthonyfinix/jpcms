@@ -1,6 +1,5 @@
 import http from '../../util/axios';
 const getCompanyById = async (id) => {
-    console.log(id)
     try {
         let { data } = await http.get(`/company/${id}`);
         if (data.error) return { error: data.error }
