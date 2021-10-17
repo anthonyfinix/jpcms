@@ -1,6 +1,6 @@
 import { SET_COMPANY } from "./actions/setCompanies";
 import { SET_CURRENT_COMPANY } from "./actions/setCurrentCompany";
-import { SET_ERROR } from "./actions/setError";
+import { SET_COMPANY_ERROR } from "./actions/setCompanyError";
 import { START_COMPANY_FETCHING } from "./actions/startCompanyFetching";
 import { STOP_COMPANY_FETCHING } from "./actions/stopCompanyFetching";
 
@@ -18,7 +18,7 @@ const companyReducer = (state = initialState, actions) => {
             return { ...state, isFetchingCompanies: false }
         case SET_COMPANY:
             return { ...state, companies: actions.payload }
-        case SET_ERROR:
+        case SET_COMPANY_ERROR:
             return { ...state, error: actions.payload }
         case SET_CURRENT_COMPANY:
             return { ...state, currentCompany: actions.payload }
