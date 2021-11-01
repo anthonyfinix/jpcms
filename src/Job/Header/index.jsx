@@ -3,7 +3,10 @@ import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import classes from './header.module.scss';
 import TextField from '@mui/material/TextField';
-const JobHeader = ({ addNew,...props }) => {
+import openAddNewJobDialog from '../redux/action/openAddNewJobDialog';
+import { connect } from 'react-redux';
+import handleJobSearch from '../redux/middleware/handleJobSearch'
+const JobHeader = ({ addNew, ...props }) => {
     return (
         <div display="flex" className={classes.wrapper}>
             <h3>Jobs</h3>
@@ -12,8 +15,15 @@ const JobHeader = ({ addNew,...props }) => {
                     <AddIcon />
                 </IconButton>
             </div>
-            <TextField onChange={props.handleSearch} placeholder="search" size="small" variant="outlined" />
+            <TextField onChange={(e)=>props.handleJobSearch(props.company,e.currentTarget.value)} placeholder="search" size="small" variant="outlined" />
         </div>
     )
 }
-export default JobHeader;
+const mapStateToProps = state => ({
+    company:state.COMPANY.currentCompany
+})
+const mapDispatchToProps = {
+    openAddNewJobDialog: () => dispatch => dispatch(openAddNewJobDialog()),
+    handleJobSearch
+}
+export default connect(mapStateToProps, mapDispatchToProps)(JobHeader);

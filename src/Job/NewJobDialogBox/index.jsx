@@ -8,18 +8,21 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import moment from "moment";
 import classes from './newJobDialogBox.module.scss'
+import closeAddNewJobDialog from '../redux/action/closeAddNewJobDialog';
+import handleUpdateJob from '../redux/middleware/handleUpdateJob'
+import handleAddJob from '../redux/middleware/handleAddJob';
 import { connect } from 'react-redux';
 
 const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, isUpdate, currentJob, ...props }) => {
     // customer
     const [customerName, setCustomerName] = React.useState('');
-    const [customerNameError, setCustomerNameError] = React.useState("")
+    const [customerNameError, setCustomerNameError] = React.useState("");
+    const [serialNumber, setSerialNumber] = React.useState('');
     const handleCustomerNameChange = (e) => {
         let value = e.currentTarget.value;
         (value === "") ? setCustomerNameError("Should not be empty") : setCustomerNameError("");
         setCustomerName(value);
     }
-    const [serialNumber, setSerialNumber] = React.useState('');
     // model
     const [model, setModel] = React.useState('')
     const [modelError, setModelError] = React.useState('')
@@ -78,28 +81,30 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
     }
     const handleSubmit = () => {
         if (currentJob) {
-            handleJobUpdate().then(() => resetInputs())
+            handleJobUpdate().then(() => resetInputs());
         } else {
-            handleJobCreate().then(() => resetInputs())
+            handleJobCreate().then(() => resetInputs());
         }
     }
     const handleDialogClose = () => {
         resetInputs();
         handleClose();
     }
-    const handleJobCreate = () => createJob({ customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription });
-    const handleJobUpdate = () => updateJob({ id: currentJob._id, customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription });
+    const handleJobCreate = () => props.handleAddJob(props.company, { customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription });
+    const handleJobUpdate = () => props.handleUpdateJob(props.company, { id: currentJob._id, customerName, serialNumber, model, issues, brand, status, amount, receivedDate, returnedDate, detailedDescription });
     React.useEffect(() => {
-        setCustomerName(currentJob.customerName);
-        setSerialNumber(currentJob.serialNumber);
-        setModel(currentJob.model);
-        setIssues(currentJob.issues);
-        setBrand(currentJob.brand);
-        setStatus(currentJob.status);
-        setAmount(currentJob.amount);
-        setReceivedDate(`${moment(currentJob.receivedDate).format('YYYY')}-${moment(currentJob.receivedDate).format("MM")}-${moment(currentJob.receivedDate).format("DD")}`);
-        setReturnedDate(`${moment(currentJob.returnedDate).format("YYYY")}-${moment(currentJob.returnedDate).format("MM")}-${moment(currentJob.returnedDate).format("DD")}`);
-        setDetailedDescription(currentJob.detailedDescription);
+        if (currentJob) {
+            setCustomerName(currentJob.customerName);
+            setSerialNumber(currentJob.serialNumber);
+            setModel(currentJob.model);
+            setIssues(currentJob.issues);
+            setBrand(currentJob.brand);
+            setStatus(currentJob.status);
+            setAmount(currentJob.amount);
+            setReceivedDate(`${moment(currentJob.receivedDate).format('YYYY')}-${moment(currentJob.receivedDate).format("MM")}-${moment(currentJob.receivedDate).format("DD")}`);
+            setReturnedDate(`${moment(currentJob.returnedDate).format("YYYY")}-${moment(currentJob.returnedDate).format("MM")}-${moment(currentJob.returnedDate).format("DD")}`);
+            setDetailedDescription(currentJob.detailedDescription);
+        }
     }, [currentJob])
     return (
         <Dialog
@@ -155,8 +160,8 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
                 <FormControl variant="outlined" size="small">
                     <InputLabel id="demo-simple-select-outlined-label">Status</InputLabel>
                     <Select
-                    // value={status === true ? "resolved" : "returned"}
-                    // onChange={handleStatusChange}
+                        value={status === true ? "resolved" : "returned"}
+                        onChange={handleStatusChange}
                     >
                         <MenuItem value="resolved">Resolved</MenuItem>
                         <MenuItem value="returned">Return</MenuItem>
@@ -211,11 +216,22 @@ const NewJobDialogBox = ({ open, handleClose, createJob, selected, updateJob, is
                         variant="contained"
                         onClick={handleSubmit}
                     >
-                        {currentJob._id ? "Update" : "Add New Job"}
+                        {currentJob ? "Update" : "Add New Job"}
                     </Button>
                 </div>
             </div>
-        </Dialog >
+        </Dialog>
     )
 }
-export default NewJobDialogBox;
+
+const mapStateToProps = state => ({
+    company: state.COMPANY.currentCompany,
+    currentJob: state.JOB.currentJob,
+    open: state.JOB.addNewDialogState
+});
+const mapDispatchToProps = {
+    handleClose: () => dispatch => dispatch(closeAddNewJobDialog()),
+    handleUpdateJob,
+    handleAddJob
+}
+export default connect(mapStateToProps, mapDispatchToProps)(NewJobDialogBox);

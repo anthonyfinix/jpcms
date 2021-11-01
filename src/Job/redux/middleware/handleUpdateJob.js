@@ -6,16 +6,15 @@ import setJobs from "../action/setJobs";
 import startFetchingJobs from "../action/startJobsFetching";
 import stopFetchingJobs from "../action/stopJobsFetching";
 import updateCurrentJob from "../action/updateCurrentJob";
-const handleUpdateJob = (company, currentJob) => async (dispatch) => {
-    console.log(currentJob)
+const handleUpdateJob = (company, updatedJobDetails) => async (dispatch) => {
     dispatch(startFetchingJobs())
-    let response = await updateJob(company, currentJob);
+    let response = await updateJob(company, updatedJobDetails);
     if(response.error) dispatch(setJobError(response.error))
     dispatch(changeAddNewJobDialogState(false))
     if (!response.error) {
         let getJobsResponse = await getJobs(company)
         dispatch(setJobs(getJobsResponse.data.result));
-        dispatch(updateCurrentJob({}))
+        dispatch(updateCurrentJob(null))
     }
     dispatch(stopFetchingJobs())
 

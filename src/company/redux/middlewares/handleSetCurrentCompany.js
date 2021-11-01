@@ -1,6 +1,6 @@
 import getCompanyById from "../../api/getCompanyById";
-import startFetchingCompany from "../actions/startCompanyFetching";
-import stopFetchingCompany from "../actions/stopCompanyFetching";
+import startFetchingCompany from "../actions/startFetchingCompany";
+import stopFetchingCompany from "../actions/stopFetchingCompany";
 import setCurrentCompany from '../actions/setCurrentCompany';
 import setCompanyError from "../actions/setCompanyError";
 

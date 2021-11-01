@@ -1,6 +1,6 @@
 import getCompanies from "../../api/getCompanies";
-import startFetchingCompany from "../actions/startCompanyFetching";
-import stopFetchingCompany from "../actions/stopCompanyFetching";
+import startFetchingCompany from "../actions/startFetchingCompany";
+import stopFetchingCompany from "../actions/stopFetchingCompany";
 import setCompanies from "../actions/setCompanies";
 import setCompanyError from "../actions/setCompanyError";
 

@@ -9,12 +9,12 @@ import updateCurrentJob from "../action/updateCurrentJob";
 const handleAddJob = (company, newJob) => async (dispatch) => {
     dispatch(startFetchingJobs())
     let response = await addJob(company, newJob);
-    if(response.error) dispatch(setJobError(response.error))
+    if (response.error) dispatch(setJobError(response.error))
     dispatch(changeAddNewJobDialogState(false))
     if (!response.error) {
         let getJobsResponse = await getJobs(company)
         dispatch(setJobs(getJobsResponse.data.result));
-        dispatch(updateCurrentJob({}))
+        dispatch(updateCurrentJob(null))
     }
     dispatch(stopFetchingJobs())
 

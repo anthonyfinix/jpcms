@@ -3,6 +3,8 @@ import moment from "moment";
 import Dialog from '@mui/material/Dialog';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { connect } from "react-redux";
+import closeSingleJobDialog from "../redux/action/closeSingleJobDialog";
 const SingleJobDialog = ({ open, handleClose, job, ...props }) => {
     const handleDialogClose = () => {
         handleClose()
@@ -28,16 +30,22 @@ const SingleJobDialog = ({ open, handleClose, job, ...props }) => {
                     <Typography variant="h6" gutterBottom component="div">{moment(job.returnedDate).format("Do MMM YY")}</Typography>
                 </div>
                 <div>
-                <Typography variant="overline" display="block" gutterBottom>Amount</Typography>
-                <Typography variant="h6" gutterBottom component="div">{job.amount}</Typography>
+                    <Typography variant="overline" display="block" gutterBottom>Amount</Typography>
+                    <Typography variant="h6" gutterBottom component="div">{job.amount}</Typography>
                 </div>
                 <div>
-                <Typography variant="overline" display="block" gutterBottom>Description</Typography>
-                <Typography variant="h6" gutterBottom component="div">{job.detailedDescription}</Typography>
+                    <Typography variant="overline" display="block" gutterBottom>Description</Typography>
+                    <Typography variant="h6" gutterBottom component="div">{job.detailedDescription}</Typography>
                 </div>
             </Box>
         </Dialog>
     )
 }
-
-export default SingleJobDialog;
+const mapStateToProps = state => ({
+    open: state.JOB.singleJobDialogState,
+    job: state.JOB.currentJob
+})
+const mapDispatchToProps = {
+    handleClose: () => dispatch => dispatch(closeSingleJobDialog())
+}
+export default connect(mapStateToProps, mapDispatchToProps)(SingleJobDialog);

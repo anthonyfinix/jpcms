@@ -10,17 +10,19 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 // import CustomDropdown from '../../shared/Dropdown';
 import { connect } from 'react-redux';
-import searchCompanies from '../api/searchCompanies';
+// import searchCompanies from '../api/searchCompanies';
 import { ClickAwayListener, Popper } from '@mui/material';
 import config from '../../config';
 import handleSetCurrentCompany from '../redux/middlewares/handleSetCurrentCompany';
+import handleSearchCompanies from '../redux/middlewares/handleSearchCompanies'
 const CompanySelectionDialog = (props) => {
-    const [searchResults, setSearchResults] = React.useState([]);
+    // const [searchResults, setSearchResults] = React.useState([]);
     const [textFieldRef, setTextFieldRef] = React.useState(false);
     const handleSearchResultClose = () => setTextFieldRef(false);
     const handleCompanySearch = (e) => {
         let value = e.currentTarget.value;
-        searchCompanies(value).then(response => setSearchResults(response.result))
+        // searchCompanies(value).then(response => setSearchResults(response.result))
+        props.handleSearchCompanies(value)
         if (value) setTextFieldRef(e.currentTarget);
     };
     const handleCompanyClick = (company) => {
@@ -28,11 +30,12 @@ const CompanySelectionDialog = (props) => {
         handleSearchResultClose();
         props.handleSetCurrentCompany(company._id)
     }
-    const ResultList = () => {
+    const ResultList = (props) => {
         return (
             <List>
+                {props.isLoading && <ListItem key={"searching"} disablePadding><ListItemButton><ListItemText primary="searching..." /></ListItemButton></ListItem>}
                 {
-                    searchResults.map(company => {
+                    props.searchedCompanies.map(company => {
                         return (
                             <ListItem key={company._id} disablePadding>
                                 <ListItemButton>
@@ -56,12 +59,12 @@ const CompanySelectionDialog = (props) => {
                     <ClickAwayListener onClickAway={handleSearchResultClose}>
                         <Popper placement="bottom-start" open={Boolean(textFieldRef)} anchorEl={textFieldRef}>
                             <Card>
-                                <ResultList />
+                                <ResultList isLoading={props.isLoading} searchedCompanies={props.searchedCompanies} />
                             </Card>
                         </Popper>
                     </ClickAwayListener>
                     <div className={`${classes.action_wrapper}`}>
-                        <Button>Create</Button>
+                        <Button onClick={props.createCompany} >Create</Button>
                         <Button variant="contained">Select</Button>
                     </div>
                 </Card>
@@ -69,6 +72,6 @@ const CompanySelectionDialog = (props) => {
         </>
     )
 }
-const mapStateToProps = state => ({ companies: state.COMPANY.companies });
-const mapDispatchToProps = {handleSetCurrentCompany};
+const mapStateToProps = state => ({ companies: state.COMPANY.companies, isLoading: state.COMPANY.isSearchingCompanies, searchedCompanies: state.COMPANY.searchedCompanies });
+const mapDispatchToProps = { handleSetCurrentCompany, handleSearchCompanies };
 export default connect(mapStateToProps, mapDispatchToProps)(CompanySelectionDialog);

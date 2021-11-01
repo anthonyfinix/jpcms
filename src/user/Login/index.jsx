@@ -9,18 +9,20 @@ import { UserContext } from '../../UserProvider';
 import { useHistory } from 'react-router';
 import classes from './login.module.scss';
 import logo from '../../assets/vectors/logo.svg';
-import { SnackbarContext } from '../../shared/SnackbarProvider';
+import { connect } from 'react-redux';
+import handleShowNotification from '../../App/redux/middleware/handleShowNotification';
+// import { SnackbarContext } from '../../shared/SnackbarProvider';
 
-const Login = () => {
+const Login = (props) => {
     const history = useHistory();
-    const { notify } = React.useContext(SnackbarContext);
+    // const { notify } = React.useContext(SnackbarContext);
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
     const { user, setUser } = React.useContext(UserContext);
     const login = () => {
         http.post('/user/login', { username, password })
             .then(response => {
-                if (response.data.error) notify(response.data.error)
+                if (response.data.error) props.handleShowNotification(response.data.error)
                 !response.data.error && setUser(response.data.user)
             })
     }
@@ -28,7 +30,7 @@ const Login = () => {
         if (user) history.push('/');
     })
     return (
-        <Box className={`${classes.main_wrapper} m-md`}>
+        <Box className={`${classes.main_wrapper} p-md`}>
             <div className={`${classes.brand_wrapper}`}>
                 <img src={`${logo}`} alt="logo" />
                 <Typography>Catalog</Typography>
@@ -55,4 +57,5 @@ const Login = () => {
         </Box>
     )
 }
-export default Login;
+const mapDispatchToProps = { handleShowNotification }
+export default connect(null, mapDispatchToProps)(Login);

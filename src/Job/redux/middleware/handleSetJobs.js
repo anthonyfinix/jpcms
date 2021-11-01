@@ -1,19 +1,19 @@
 import getJobs from "../../api/getJobs";
-import startJobsFetching from "../action/startJobsFetching";
-import stopJobsFetching from "../action/stopJobsFetching";
+import startFetchingJobs from "../action/startJobsFetching";
+import stopFetchingJobs from "../action/stopJobsFetching";
 import setJobs from "../action/setJobs";
-import setJobErrors from "../action/setJobError";
+import setJobError from "../action/setJobError";
 
 const handleSetJobs = (company,options) => dispatch => {
-    dispatch(startJobsFetching())
+    dispatch(startFetchingJobs())
     getJobs(company,options)
         .then(response => {
             let { error, data } = response;
-            if (error) return dispatch(setJobErrors(error));
+            if (error) return dispatch(setJobError(error));
             if (data) return dispatch(setJobs(data.result));
         })
         .finally(() => {
-            dispatch(stopJobsFetching())
+            dispatch(stopFetchingJobs())
         })
 };
 

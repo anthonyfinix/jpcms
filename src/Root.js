@@ -14,15 +14,13 @@ function Root() {
         <WindowWidthProvider>
           <HeadProvider />
           <MaterialThemeProvider>
-            <CompanyProvider>
+            <SnackbarProvider>
               <UserProvider>
-                <BrowserRouter>
-                  <SnackbarProvider>
+                  <BrowserRouter>
                     <MainRouter />
-                  </SnackbarProvider>
-                </BrowserRouter>
+                  </BrowserRouter>
               </UserProvider>
-            </CompanyProvider>
+            </SnackbarProvider>
           </MaterialThemeProvider>
         </WindowWidthProvider>
       </ReduxProvider>
